@@ -1,0 +1,55 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
+    <style>
+      .map {
+        height: 400px;
+        width: 100%;
+      }
+      .container {
+        position:relative;
+        background-image: url("image/map.png");
+        border-style: solid;
+      }
+      .img {
+        position: absolute;
+        left: 50px;
+        top : 250px;
+
+      }
+      
+      .circle {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+    </style>
+    <script src="js/cam.js"></script>
+    <script type="text/javascript" src="vendor/dist/http-live-player.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <title>Smart traffic</title>
+  </head>
+  <body>
+    <h2>My Map</h2>
+    <div class="container" style="width:700px; height:600px">
+    </div>
+    <div>
+    <% for (var cam_id in active_camera) { var cam = active_camera[cam_id];%>
+        <span class="circle" style="background-color: <%=cam['color']%>;left:<%=cam['x'] + 30%>px;top:<%=cam['y'] - 20%>px;" id="circle-<%=cam_id%>" ></span>
+        <img src="/image/camera.png" style="position:absolute;left:<%=cam['x']%>px;top:<%=cam['y']%>px;width:70px;" id="<%=cam_id%>" value="<%=cam['active']%>" onclick="cam(this.id)">
+    <% } %>
+    </div><br><br><br>
+    <div style="border-style: solid;position:absolute;right:15%;top:100px;width:900px;height:54px;" id="div-cam-img">
+        <!--<img src="<%=active_camera[token]['image']%>" id="cam-image" style="width:300px;height:300px">    -->
+    </div>
+    
+    <div style="border-style: solid;position:absolute;right:15%;top:400px;width:450px;height:150px;" id="info">
+        <p id="number" style="padding-left:15px"></p>
+        <p id="status" style="padding-left:15px"></p>
+    </div>
+  </body>
+</html>
+

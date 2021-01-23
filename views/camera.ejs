@@ -1,0 +1,39 @@
+<%- include('header'); -%>
+
+<body>
+    
+    <script type="text/javascript" src="vendor/dist/http-live-player.js"></script>
+    <div width="900px" height="540px">
+        <canvas id="cam-video"/> 
+        </div>
+    <br>
+    <button type="button" class="btn btn-success" onclick="wsavc.playStream()">Start Video</button>
+    <button type="button" class="btn btn-success" onclick="wsavc.disconnect()">Disconnect</button>
+
+    <br> 
+    <div>
+        Descript : 
+        Mat do giao thong : <br>
+        Toc do trung binh : <br>
+        Vi pham giao thong : <br>
+    </div>
+
+    <script type="text/javascript">    
+        var canvas = document.getElementById("cam-video");
+        // Create h264 player
+        <% var uri = uri; %>
+        var wsavc = new WSAvcPlayer(canvas, "webgl", 1, 35);
+        wsavc.connect("<%=uri%>");
+
+        //expose instance for button callbacks
+        window.wsavc = wsavc;
+        window.onbeforeunload = closingCode;
+        
+        function closingCode(){
+            wsavc.disconnect();
+            return null;
+        }
+    </script>
+</body>
+</html>
+

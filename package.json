@@ -1,0 +1,22 @@
+{
+  "name": "camera-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wot-server.js",
+  "dependencies": {
+    "config": "^3.3.3",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "jquery": "^3.5.1",
+    "mqtt": "^4.2.6",
+    "sleep": "^6.3.0",
+    "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node wot-server.js"
+  },
+  "author": "hacmao",
+  "license": "ISC"
+}

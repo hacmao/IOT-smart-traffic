@@ -1,0 +1,76 @@
+<%- include('header'); -%>
+
+<h2>My Map</h2>
+
+<div class="containerr" style="left:10px;width:700px; height:600px">
+</div>
+<div>
+<% for (var cam_id in active_camera) { var cam = active_camera[cam_id];%>
+    <span class="circle" style="background-color: <%=cam['color']%>;left:<%=cam['x'] + 30%>px;top:<%=cam['y']+20 %>px;" id="circle-<%=cam['id']%>" ></span>
+    <img src="/image/camera.png" style="position:absolute;left:<%=cam['x']%>px;top:<%=cam['y']+40%>px;width:70px;" id="<%=cam['id']%>" value="<%=cam['active']%>" onclick="cam(this.id)">
+<% } %>
+</div><br><br><br>
+<div style="border-style: solid;position:absolute;right:15%;top:100px;width:450px;height:450px;" id="div-cam-img">
+</div>
+
+<div style="border-style: solid;position:absolute;right:15%;top:600px;width:450px;height:150px;" id="info">
+    <p id="number" style="padding-left:15px"></p>
+    <p id="status" style="padding-left:15px"></p>
+</div>
+<button id="btn-video" style="position:absolute;right:15%" class="btn btn-success" onclick="cam(current_id)">Video</button>
+
+<script>
+function update(camera) {
+    for (var tk in camera) {
+        var cam_id = camera[tk]['id'];
+        document.getElementById("circle-" + cam_id).style.backgroundColor = camera[tk]['color'];
+    }
+
+    // update info status
+    /* if (camera[current_token]['active']) {
+        is_set = true;
+        document.getElementById("number").innerHTML = "Number of transport : " + camera[current_token]['count'];
+    }
+    else {
+        if (is_set) {
+            is_set = false;
+            document.getElementById("number").innerHTML = "";
+            set_canvas(uri);
+        }
+    }
+    */
+}
+
+var camera = {} ;
+var current_id = null;
+
+window.onload = function() {
+    document.getElementById("btn-video").style.display = "none";    
+    var wsUrl = "<%=wsUrl%>";
+
+    console.log(wsUrl);
+    var ws = new WebSocket(wsUrl);
+    ws.onmessage = function onmsg(msg) {
+        try {
+            var req = JSON.parse(msg.data);
+            if (req['cmd'] == "HEALTH_INFO") {
+                console.log(req);
+                camera = JSON.parse(req['cam']);
+                update(camera); 
+            }   
+        
+            if (req['cmd'] == "NEW_CONNECT") {
+                var cam_token = req['token'];
+                var cam_id = camera[cam_token]['id'];
+                ws.send("HEALTH_CHECK");
+            }
+        } catch (err){
+            console.log(err);
+            return;
+        }
+
+    }
+}
+
+</script>
+

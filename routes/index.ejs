@@ -1,0 +1,50 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css" type="text/css">
+    <style>
+      .map {
+        height: 400px;
+        width: 100%;
+      }
+      .container {
+        position:relative;
+        background-image: url("image/map.png");
+        border-style: solid;
+      }
+      .img {
+        position: absolute;
+        left: 50px;
+        top : 250px;
+
+      }
+      
+      .circle {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+    <script src="js/cam.js"></script>
+    <title>Smart traffic</title>
+  </head>
+  <body>
+    <h2>My Map</h2>
+    <div class="container" style="width:700px; height:600px">
+    </div>
+    <div>
+        <span class="circle" style="background-color: #bbb;left:150px;top:365px;" id="circle-ef19530563f3c7ded2047b3dbd23547b"></span>
+        <img src="/image/camera.png" style="position:absolute;left:120px;top:385px;width:70px;" id="cam1" name="ef19530563f3c7ded2047b3dbd23547b" onclick="cam(this.name)">
+        
+        <span class="circle" style="background-color: #bbb;left:530px;top: 230px;"></span> 
+        <img src="/image/camera.png" style="position:absolute;left:500px;top:250px;width:70px;" id="cam2" name="af19530563f3c7ded2047b3dbd23547c" onclick="cam(this.name)">
+    </div><br><br><br><br><br>
+    <div style="border-style: solid;position: absolute;right:700px;top : 70px;width:300px;height:300px;" name="picture">
+        
+    </div>
+  </body>
+</html>
+

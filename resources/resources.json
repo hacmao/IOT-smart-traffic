@@ -1,0 +1,25 @@
+{
+        "pi" : {
+                "name" : "hacmao-pi",
+                "description" : "first server",
+                "port" : 8484,
+                "sensors" : {
+                        "lcd" : {
+                                "name" : "lcd",
+                                "description" : "1602",
+                                "url" : "/pi/sensors/lcd"
+                        },
+                        "led" : {
+                                "name" : "led",
+                                "description" : "led rgb",
+                                "url" : "/pi/sensors/led"
+                        },
+                        "dht11" : {
+                                "name" : "dht11",
+                                "description" : "measure temperature and humidity",
+                                "url" : "/pi/sensors/dht11"
+                        }
+                }
+        }
+}
+

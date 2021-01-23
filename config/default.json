@@ -1,0 +1,14 @@
+{
+    "ip" : "192.168.1.137",
+    "port" : {
+        "data" : 8888,
+        "stream" : 8080
+    },
+    "hiveMQ" : "mqtt://broker.hivemq.com:1883",
+    "topic" : [
+        "camera-KSTN/login",
+        "camera-KSTN/logout",
+        "camera-KSTN/image",
+        "camera-KSTN/data"
+    ]
+}
