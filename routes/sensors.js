@@ -52,17 +52,41 @@ client.on('connect', () => {
     }
 });
 
+// camera authentication
+function cam_auth(cam_token) {
+    var client = new net.Socket();
+    client.connect(8888, camera_active[cam_token]['ip'], function() {
+        console.log('Connected');
+        client.write(cam_token);
+    });
+    
+    client.on('data', function(data) {
+        data = data.toString();
+        console.log('Received: ' + data.charCodeAt(0));
+        client.destroy(); // kill client after server's response
+        if (data[0] == '\x01') {
+            camera_active[cam_token]['auth'] = true;
+        }
+    });
+
+}
+
 client.on('message', (topic, message) => {
     var message = message.toString();
     switch (topic) {
         case "camera-KSTN/login" : 
-            if (camera_active[message]) {
-                camera_active[message]['active'] = true;
-                camera_active[message]['color'] = s_traffic[1];
-                camera_active[message]['count'] = 0; 
+            cam_token = message; 
+            if (camera_active[cam_token]) {
+                camera_active[cam_token]['active'] = true;
+                camera_active[cam_token]['color'] = s_traffic[1];
+                camera_active[cam_token]['count'] = 0; 
                 console.log("Cam " + message + " is connected.");
                 client.publish("camera-KSTN/" + message, "OK"); 
+
                 wsBroadcast(JSON.stringify({"cmd" : "NEW_CONNECT", "token" : message}));
+
+                // authenticate camera
+                cam_auth(cam_token);
             }
             break;
 
@@ -123,6 +147,16 @@ wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(data) {
         if (data == "HEALTH_CHECK") {
             health_check();
+        } else {
+            try {
+                data_json = JSON.parse(data);
+                if(data_json['cmd'] == "IMAGE") {
+                    wsBroadcast(data);
+                }
+            } catch (err) {
+                console.log(err);
+                return;
+            }
         } 
     });
 });
@@ -162,7 +196,6 @@ router.route("/camera").get(function(req, res, next) {
         if (camera_active[key]['id'] == cam_id) 
             cam_token = key;
     }
-    console.log(cam_token);
     
     if (!camera_active[cam_token]['auth']) {
         client.connect(8888, camera_active[cam_token]['ip'], function() {

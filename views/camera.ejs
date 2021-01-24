@@ -3,23 +3,28 @@
 <body>
     
     <script type="text/javascript" src="vendor/dist/http-live-player.js"></script>
-    <div width="900px" height="540px">
-        <canvas id="cam-video"/> 
-        </div>
-    <br>
-    <button type="button" class="btn btn-success" onclick="wsavc.playStream()">Start Video</button>
-    <button type="button" class="btn btn-success" onclick="wsavc.disconnect()">Disconnect</button>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+    <!-- Load the coco-ssd model. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+    <canvas id="cav" width="960" height="540" style="position:absolute;top:100px; border:1px solid #000000;padding:10px;"></canvas><br>
+    <canvas id="cav2" width="960" height="540" style="position:absolute;top:100px;border:1px solid #000000;padding:10px;"></canvas><br>
+  
+    <button type="button" class="btn btn-success" onclick="wsavc.playStream()" style="position:absolute;top:700px">Start Video</button>
 
     <br> 
-    <div>
-        Descript : 
+    <div style="position:absolute;top:800px">
+        <h1>Descript : </h1>
         Mat do giao thong : <br>
         Toc do trung binh : <br>
         Vi pham giao thong : <br>
     </div>
 
-    <script type="text/javascript">    
-        var canvas = document.getElementById("cam-video");
+    <script type="text/javascript">   
+        var canvas = document.getElementById("cav");
+		var canvas2 = document.getElementById("cav2");
+		var ctx2 = canvas2.getContext("2d");
+
         // Create h264 player
         <% var uri = uri; %>
         var wsavc = new WSAvcPlayer(canvas, "webgl", 1, 35);
@@ -30,10 +35,72 @@
         window.onbeforeunload = closingCode;
         
         function closingCode(){
-            wsavc.disconnect();
+            //wsavc.disconnect();
             return null;
         }
     </script>
+    
+    <!-- Model object detection -->
+    <script>
+        
+		var cur_time = Date.now();
+
+		// 1 time/s
+		detectFromVideoFrame = (model, video) => {
+			if (Date.now() - cur_time < 1000)
+				return;
+			cur_time = Date.now();
+			model.detect(video).then(predictions => {
+			  this.showDetections(predictions);
+
+			}, (error) => {
+			  console.log("Couldn't start the webcam")
+			  console.error(error)
+			});
+		  };
+
+		  showDetections = predictions => {
+			//const ctx = this.canvasRef.current.getContext("2d");
+			ctx2.clearRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
+			const font = "24px helvetica";
+			ctx2.font = font;
+			ctx2.textBaseline = "top";
+
+			predictions.forEach(prediction => {
+			  const x = prediction.bbox[0];
+			  const y = prediction.bbox[1];
+			  const width = prediction.bbox[2];
+			  const height = prediction.bbox[3];
+			  // Draw the bounding box.
+			  ctx2.strokeStyle = "#2fff00";
+			  ctx2.lineWidth = 1;
+			  ctx2.strokeRect(x, y, width, height);
+
+			  // Draw the label background.
+			  ctx2.fillStyle = "#2fff00";
+			  const textWidth = ctx2.measureText(prediction.class).width;
+			  const textHeight = parseInt(font, 10);
+			  // draw top left rectangle
+			  ctx2.fillRect(x, y, textWidth + 10, textHeight + 10);
+			  // draw bottom left rectangle
+			  ctx2.fillRect(x, y + height - textHeight, textWidth + 15, textHeight + 10);
+
+			  // Draw the text last to ensure it's on top.
+			  ctx2.fillStyle = "#000000";
+			  ctx2.fillText(prediction.class, x, y);
+			  ctx2.fillText(prediction.score.toFixed(2), x, y + height - textHeight);
+			});
+		  };
+
+		var model;
+		const loadlModelPromise = cocoSsd.load().then(res => {
+			model = res;
+			console.log("Load success!");
+		});
+
+
+	</script>
+
 </body>
 </html>
 

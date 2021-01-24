@@ -33,12 +33,26 @@ function set_canvas(image, token) {
 }
 
 function cam(id) {
+    console.log(id);
+    current_id = id;
     for (var tk in camera) {
         if (camera[tk]['id'] == id && camera[tk]['active']) {
             //document.location = "/camera?id=" + id; 
             document.getElementById("btn-video").style.display = "block";
+
+            // create snapshot request to ws://<pi-camera>:8080
+            var ws = new WebSocket(`ws://${camera[tk]['ip']}:8080/`);
+            ws.onopen = function(evt) {
+                ws.send("SNAPSHOT");
+            }
+            //while (ws.readyState != 1) {};
+            //ws.send("SNAPSHOT");
         }
     }
+}
+
+function view_video(id) {
+    document.location = "/camera?id=" + id;
 }
 
 function cam_backup(token) {

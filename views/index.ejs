@@ -10,15 +10,17 @@
     <img src="/image/camera.png" style="position:absolute;left:<%=cam['x']%>px;top:<%=cam['y']+40%>px;width:70px;" id="<%=cam['id']%>" value="<%=cam['active']%>" onclick="cam(this.id)">
 <% } %>
 </div><br><br><br>
-<div style="border-style: solid;position:absolute;right:15%;top:100px;width:450px;height:450px;" id="div-cam-img">
+<div style="border-style: solid;position:absolute;right:5%;top:100px;width:450px;height:450px;" id="div-cam-img">
+    <img src="" id="cam-img" width="445px" height="445px">
 </div>
 
-<div style="border-style: solid;position:absolute;right:15%;top:600px;width:450px;height:150px;" id="info">
+<div style="border-style: solid;position:absolute;right:5%;top:600px;width:450px;height:150px;" id="info">
     <p id="number" style="padding-left:15px"></p>
     <p id="status" style="padding-left:15px"></p>
 </div>
-<button id="btn-video" style="position:absolute;right:15%" class="btn btn-success" onclick="cam(current_id)">Video</button>
+<button id="btn-video" style="position:absolute;right:15%" class="btn btn-success" onclick="view_video(current_id)">Video</button>
 
+<script type="text/javascript" src="vendor/dist/http-live-player.js"></script>
 <script>
 function update(camera) {
     for (var tk in camera) {
@@ -45,7 +47,8 @@ var camera = {} ;
 var current_id = null;
 
 window.onload = function() {
-    document.getElementById("btn-video").style.display = "none";    
+    document.getElementById("btn-video").style.display = "none";  
+
     var wsUrl = "<%=wsUrl%>";
 
     console.log(wsUrl);
@@ -57,13 +60,21 @@ window.onload = function() {
                 console.log(req);
                 camera = JSON.parse(req['cam']);
                 update(camera); 
-            }   
-        
-            if (req['cmd'] == "NEW_CONNECT") {
+            } else if (req['cmd'] == "NEW_CONNECT") {
                 var cam_token = req['token'];
                 var cam_id = camera[cam_token]['id'];
                 ws.send("HEALTH_CHECK");
+            } else if (req['cmd'] == "IMAGE") {
+                console.log("IMAGE");
+                var cam_token = req['token'];
+                if (camera[cam_token]) {
+                    var cam_id = camera[cam_token]['id'];
+                    document.getElementById("cam-img").src = req['image'];
+                }
+            } else if (req['cmd'] == 'STATUS') {
+                $('#number').html("123");
             }
+
         } catch (err){
             console.log(err);
             return;

@@ -858,6 +858,7 @@ function A(a){a&&(p.print(a),p.fa(a));H=i;d("abort() at "+Fa()+"\nIf this abort(
         infos[0].finishDecoding = nowValue();
       };
       this.onPictureDecoded(buffer, width, height, infos);
+      detectFromVideoFrame(model, canvas);
     }.bind(this)]);
 
     var HEAP8 = Module.HEAP8;
@@ -4518,6 +4519,12 @@ var WSAvcPlayer = new Class({
     this.ws.send("STOPSTREAM");
     log("Sent STOPSTREAM");
   },
+
+  takeSnapshot : function() {
+    this.ws.send("SNAPSHOT");
+    log("Sent SNAPSHOT");
+  },
+
 });
 
 
