@@ -99,18 +99,6 @@ client.on('message', (topic, message) => {
             }
             break; 
 
-        case "camera-KSTN/image" :  
-            try {
-                var msg_json = JSON.parse(message);
-                var cam_id = msg_json['token']; 
-                if (camera_active[cam_id])
-                    camera_active[cam_id]['image'] = msg_json['image'];
-            }
-            catch (error) {
-                console.log(error); 
-            }
-            break; 
-
         case "camera-KSTN/data" : 
             try {
                 var msg_json = JSON.parse(message); 
@@ -119,7 +107,10 @@ client.on('message', (topic, message) => {
                     camera_active[cam_id]['active'] = true; 
                     camera_active[cam_id]['color'] = s_traffic[msg_json['status']]; 
                     camera_active[cam_id]['count'] = msg_json['count']; 
-                }
+                } 
+
+                res = {"cmd":"STATUS", "cam" : camera_active[cam_id], "status" : msg_json['status']}
+                wsBroadcast(JSON.stringify(res));
             }
             catch (err) {
                 console.log(err); 

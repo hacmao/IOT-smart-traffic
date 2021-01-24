@@ -69,12 +69,17 @@ window.onload = function() {
                 var cam_token = req['token'];
                 if (camera[cam_token]) {
                     var cam_id = camera[cam_token]['id'];
-                    document.getElementById("cam-img").src = req['image'];
+                    if (cam_id == current_id) 
+                        document.getElementById("cam-img").src = req['image'];
                 }
             } else if (req['cmd'] == 'STATUS') {
-                $('#number').html("123");
+                console.log("update status");
+                var cam = req['cam'];
+                if (cam['id'] == current_id) {
+                    $('#number').html("Number of transport : " + cam['count']);
+                    $('#status').html("Status : " + req['status']);
+                }
             }
-
         } catch (err){
             console.log(err);
             return;
